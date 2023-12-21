@@ -1,0 +1,7 @@
+tests:
+  - test_name: "Test_1"
+    testset_file_path: "example/demoset.xlsx"  # The PATH of the testset excel file. 
+    prompt_file_name: "GPT_prompt.py"  # The name of the prompt file that include the "run_test(case)" function. 
+  # - test_name: "Test_2"
+  #   testset_file_path: ".data/testsets/demoset.xlsx"
+  #   prompt_file_name: "prompt_2.py"

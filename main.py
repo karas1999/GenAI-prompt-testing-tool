@@ -8,7 +8,7 @@ from Testset import Testset
 
 
 def get_prompt_function(prompt_file_path):
-    # Load the external function from the provided Python file
+    # Load the external function from the provided Python prompt file
     spec = importlib.util.spec_from_file_location("external_module", prompt_file_path)
     external_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(external_module)
@@ -41,7 +41,7 @@ async def run_testset(test_name, testset, run_test, output_path):
 
     df = pd.DataFrame(results)
 
-    output_file_path = f'{output_path}/{test_name}.xlsx'
+    output_file_path = f'{output_path}{test_name}.xlsx'
 
     df.to_excel(output_file_path, index=False)
     print("Excel file created at:", output_file_path)
@@ -50,23 +50,25 @@ async def run_testset(test_name, testset, run_test, output_path):
 async def main():
   
     # Prompt for YAML configuration file
-    config_file_path = input("Enter the path to the YAML configuration file: ")
+    test_folder = input("Enter the test folder that include the config.yaml file: ")
+
+    if test_folder[-1] != "/": test_folder += "/" 
+
+    config_file_path = test_folder + "config.yaml"
 
     # Load the YAML configuration file
     with open(config_file_path, 'r') as file:
         config = yaml.safe_load(file)
 
-    output_path = os.path.dirname(config_file_path)
-
     for test_config in config['tests']:
         test_name = test_config['test_name']
         testset_file_path = test_config['testset_file_path']
-        prompt_file_path = test_config['prompt_file_path']
+        prompt_file_path = test_folder + test_config['prompt_file_name']
 
         testset = Testset(testset_file_path)
         run_test = get_prompt_function(prompt_file_path)
 
-        await run_testset(test_name, testset, run_test, output_path)
+        await run_testset(test_name, testset, run_test, test_folder)
 
 # Run the main coroutine
 asyncio.run(main())
