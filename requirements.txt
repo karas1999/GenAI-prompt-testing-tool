@@ -4,3 +4,4 @@ pandas
 openpyxl
 tqdm
 pyyaml
+google-cloud-aiplatform

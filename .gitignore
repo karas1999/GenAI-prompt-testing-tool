@@ -1,5 +1,8 @@
 # Customized
 .data/
+.testsets/
+.datasource/
+playground.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

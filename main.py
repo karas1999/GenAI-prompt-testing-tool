@@ -21,7 +21,7 @@ def get_prompt_function(prompt_file_path):
     return prompt_function
 
 
-async def run_testset(test_name, testset, run_test, output_path):
+async def run_testset(test_name, testset, run_test, output_path, batch_number):
     results = []
 
     # Create an asynchronous task for each case
@@ -30,9 +30,9 @@ async def run_testset(test_name, testset, run_test, output_path):
     # Initialize tqdm progress bar
     pbar = tqdm(total=len(tasks), desc=f"Processing {test_name} Cases")
 
-    # Process three tasks concurrently using asyncio.gather
-    for i in range(0, len(tasks), 3):
-        batch = tasks[i:i+3]
+    # Process tasks concurrently using asyncio.gather
+    for i in range(0, len(tasks), batch_number):
+        batch = tasks[i:i+batch_number]
         batch_results = await asyncio.gather(*batch)
         results += batch_results
         pbar.update(len(batch_results))
@@ -64,11 +64,12 @@ async def main():
         test_name = test_config['test_name']
         testset_file_path = test_config['testset_file_path']
         prompt_file_path = test_folder + test_config['prompt_file_name']
+        batch_number = test_config['batch_number']
 
         testset = Testset(testset_file_path)
         run_test = get_prompt_function(prompt_file_path)
 
-        await run_testset(test_name, testset, run_test, test_folder)
+        await run_testset(test_name, testset, run_test, test_folder, batch_number)
 
 # Run the main coroutine
 asyncio.run(main())
